@@ -20,6 +20,9 @@ for k = 1:length(N)
     text(N(k), CI_dB(k), sprintf('%.1f',CI_dB(k)), ...
         'VerticalAlignment','bottom', 'HorizontalAlignment','right');
 end
+
+
+
 %walsh code 
 N = 8;
 function walsh_codes = generateWalshCode(N)
@@ -37,6 +40,8 @@ end
  % Order of Hadamard/Walsh matrix, must be power of 2
 codes = generateWalshCode(N);
 disp(codes); % Each row is a Walsh code
+
+
 
 %%%%%%%%%%%%% CDMA
 
@@ -73,6 +78,9 @@ else
     fprintf("1 is transmitted\n");
 end
 
+
+
+
 PN Code 
 t = [1, 1, 0, 0];
 
@@ -91,6 +99,9 @@ for i = 1:16
 end
 
 fprintf('\n');
+
+
+
 %convolution %
   t = [1, 0, 1, 0, 0];
 x1 = 0;
