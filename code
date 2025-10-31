@@ -1,0 +1,112 @@
+% Plotting C/I ratio versus Cluster Size N in cellular systems
+
+N = 3:1:15;                % Cluster sizes from 3 to 15
+n = 3.9;                   % Path loss exponent (typical values: 3 to 4)
+i0 = 6;                    % Number of first tier co-channel interferers in hexagonal layout
+
+% C/I ratio formula calculation (in dB)
+CI_linear = ( ( (sqrt(3)*N).^n ) / i0 );
+CI_dB = 10*log10(CI_linear);
+
+figure;
+plot(N, CI_dB, 'bo-','LineWidth',2,'MarkerSize',8);
+xlabel('Cluster Size (N)');
+ylabel('C/I (dB)');
+title('Carrier-to-Interference Ratio vs. Cluster Size');
+grid on;
+
+% Optional: Show values on plot
+for k = 1:length(N)
+    text(N(k), CI_dB(k), sprintf('%.1f',CI_dB(k)), ...
+        'VerticalAlignment','bottom', 'HorizontalAlignment','right');
+end
+%walsh code 
+N = 8;
+function walsh_codes = generateWalshCode(N)
+    % N must be a power of 2
+    H = hadamard(N); % Generate Hadamard matrix
+    walsh_codes = zeros(N, N); % Preallocate Walsh code matrix
+    for i = 1:N
+        % Gray code sequency pattern for Walsh ordering
+        row_order = bitxor(i-1, floor((i-1)/2));
+        walsh_codes(i, :) = H(row_order + 1, :);
+    end
+end
+
+% Example usage:
+ % Order of Hadamard/Walsh matrix, must be power of 2
+codes = generateWalshCode(N);
+disp(codes); % Each row is a Walsh code
+
+%%%%%%%%%%%%% CDMA
+
+ak = [-1, 1, -1, -1, 1, 1];      % Spreading code for user A
+bk = [1, 1, -1, 1, -1, 1];       % Spreading code for user B
+a = 1;                           % Bit to transmit for user A (1)
+b = 1;                           % Bit to transmit for user B (1)
+
+% Spreading the bits
+as = ak * a;
+bs = bk * b;
+
+% Adding the signals (superposition)
+cs = as + bs;
+
+% Receiver multiplies with respective code to extract bit
+ds = cs .* bk;
+
+% Sum the result to get the original bit
+e = ds(1) + ds(2) + ds(3) + ds(4) + ds(5) + ds(6);
+
+% Display Results
+fprintf("Encoded signal cs: ");
+disp(cs);
+
+fprintf("Decoded signal ds: ");
+disp(ds);
+
+fprintf("Sum e: %d\n", e);
+
+if e == 0
+    fprintf("0 is transmitted\n");
+else
+    fprintf("1 is transmitted\n");
+end
+
+PN Code 
+t = [1, 1, 0, 0];
+
+x1 = t(1);
+x2 = t(2);
+x3 = t(3);
+x4 = t(4);
+
+for i = 1:16
+    u1 = xor(x3, x4);
+    fprintf('%d', x4);
+    x4 = x3;
+    x3 = x2;
+    x2 = x1;
+    x1 = u1;
+end
+
+fprintf('\n');
+%convolution %
+  t = [1, 0, 1, 0, 0];
+x1 = 0;
+x2 = 0;
+x3 = 0;
+
+fprintf('\n\n');
+
+for i = 1:5
+    x1 = t(i);
+    u1 = xor(xor(x1, x2), x3);
+    u2 = xor(x1, x3);
+    fprintf('%d', u1);
+    x3 = x2;
+    fprintf('%d', u2);
+    x2 = x1;
+end
+
+fprintf('\n\n');
